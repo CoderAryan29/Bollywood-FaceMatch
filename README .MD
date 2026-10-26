@@ -1,1 +1,0 @@
-An end-to-end deep learning application that uses facial embeddings and computer vision to find Bollywood celebrity lookalikes, featuring similarity ranking, face detection, and an interactive web interface.
