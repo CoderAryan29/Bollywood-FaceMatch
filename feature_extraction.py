@@ -1,4 +1,4 @@
-'''
+
 import os
 import pickle
 
@@ -39,14 +39,3 @@ with open('filenames.pkl', 'wb') as file:
     pickle.dump(filenames, file)
 
 print("All filenames saved to filenames.pkl")
-'''
-
-
-
-
-
-
-
-
-
-
