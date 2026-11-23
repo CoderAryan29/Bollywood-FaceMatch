@@ -25,13 +25,15 @@ model = VGGFace(
 
 detector=MTCNN()
 #load image --> face detect
-sample_img=cv2.imread('sample/33.webp')
-result=detector.detect_faces(sample_img)
+sample_img = cv2.imread('sample/33.webp')
+sample_img = cv2.cvtColor(sample_img, cv2.COLOR_BGR2RGB)
+result = detector.detect_faces(sample_img)
 
-x,y,width,height=result[0]['box']
+x, y, width, height = result[0]['box']
+x1, y1 = max(0, x), max(0, y)
+x2, y2 = min(sample_img.shape[1], x + width), min(sample_img.shape[0], y + height)
 
-
-face=sample_img[y:y+height,x:x+width]
+face = sample_img[y1:y2, x1:x2]
 
 image=Image.fromarray(face)
 image=image.resize((224,224))
@@ -48,8 +50,7 @@ similarity=[]
 for i in range(len(feature_list)):
     similarity.append(cosine_similarity(result.reshape(1,-1),feature_list[i].reshape(1,-1))[0][0])
 
-index_pos=(sorted(list(enumerate(similarity)),reverse=True)) 
-
+index_pos = sorted(list(enumerate(similarity)), reverse=True, key=lambda x: x[1])
 temp_img=cv2.imread(filenames[index_pos[0][0]])
 cv2.imshow('output',temp_img)
 cv2.waitKey(0)
