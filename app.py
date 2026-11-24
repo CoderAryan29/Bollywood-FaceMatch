@@ -1,3 +1,39 @@
+import sys
+import types
+import keras.utils
+
+# 1. Fix missing layer_utils (for newer Keras on Python 3.11+)
+try:
+    from keras.utils import layer_utils
+except ImportError:
+    keras.utils.layer_utils = types.ModuleType('layer_utils')
+    sys.modules['keras.utils.layer_utils'] = keras.utils.layer_utils
+
+# 2. Fix missing data_utils
+try:
+    from keras.utils.data_utils import get_file
+except ImportError:
+    data_utils = types.ModuleType('data_utils')
+    try:
+        from tensorflow.keras.utils import get_file
+    except ImportError:
+        from keras.utils import get_file
+    data_utils.get_file = get_file
+    keras.utils.data_utils = data_utils
+    sys.modules['keras.utils.data_utils'] = data_utils
+
+# 3. Fix missing keras.engine.topology
+try:
+    from keras.engine.topology import get_source_inputs
+except ImportError:
+    topology = types.ModuleType('topology')
+    try:
+        from tensorflow.keras.utils import get_source_inputs
+    except ImportError:
+        from keras.utils import get_source_inputs
+    topology.get_source_inputs = get_source_inputs
+    sys.modules['keras.engine.topology'] = topology
+
 from keras_vggface.utils import preprocess_input
 from keras_vggface.vggface import VGGFace
 
@@ -228,14 +264,17 @@ if uploaded_image is not None:
                     features
                 )
 
+                # Convert Windows '\' to '/' for cross-platform compatibility
+                matched_path = filenames[index_pos].replace('\\', '/')
+
                 # Get actor name from parent folder
                 predicted_actor = os.path.basename(
-                    os.path.dirname(filenames[index_pos])
+                    os.path.dirname(matched_path)
                 ).replace('_', ' ')
 
                 # Load matched celebrity image
                 matched_image = Image.open(
-                    filenames[index_pos]
+                    matched_path
                 ).convert('RGB')
 
                 # Display result
