@@ -1,0 +1,10 @@
+streamlit
+tensorflow==2.12.0
+keras==2.12.0
+keras-applications
+git+https://github.com/rcmalli/keras-vggface.git
+mtcnn
+numpy<2.0.0
+pillow
+scikit-learn
+opencv-python-headless
