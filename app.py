@@ -41,10 +41,22 @@ import pickle
 import streamlit as st
 from PIL import Image
 import os
+import io
+import base64
 import cv2
 from mtcnn import MTCNN
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+
+
+def image_to_data_uri(pil_img, max_size=800):
+    """Convert a PIL image to an inline base64 JPEG data URI so st.image bypasses MediaFileManager."""
+    img_copy = pil_img.copy()
+    img_copy.thumbnail((max_size, max_size))
+    buf = io.BytesIO()
+    img_copy.save(buf, format='JPEG', quality=90)
+    b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+    return f"data:image/jpeg;base64,{b64}"
 
 
 # -------------------------------
@@ -226,12 +238,14 @@ uploaded_image = st.file_uploader(
 
 if uploaded_image is not None:
 
+    uploaded_image.seek(0)
     display_image = Image.open(
         uploaded_image
     ).convert('RGB')
+    display_uri = image_to_data_uri(display_image)
 
     st.image(
-        display_image,
+        display_uri,
         caption="Your uploaded image",
         width=300
     )
@@ -287,7 +301,7 @@ if uploaded_image is not None:
                     st.header("Your Uploaded Image")
 
                     st.image(
-                        display_image,
+                        display_uri,
                         use_container_width=True
                     )
 
@@ -298,6 +312,6 @@ if uploaded_image is not None:
                     )
 
                     st.image(
-                        matched_image,
+                        image_to_data_uri(matched_image),
                         use_container_width=True
                     )
