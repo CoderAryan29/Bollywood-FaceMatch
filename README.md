@@ -1,13 +1,3 @@
----
-title: Bollywood FaceMatch
-emoji: 🎬
-colorFrom: red
-colorTo: purple
-sdk: gradio
-app_file: app.py
-pinned: false
----
-
 <div align="center">
 
 # 🎬 Bollywood FaceMatch
